@@ -1,0 +1,877 @@
+
+            <!-- Page: Student Master Data Entry Form (All 8 Categories) -->
+            <div id="page-student-master-data" class="page hidden space-y-6 pb-12">
+                <!-- Header Banner -->
+                <div class="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200 shadow-sm relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-64 h-64 bg-[#0A2D6A]/5 rounded-full -mr-20 -mt-20 pointer-events-none"></div>
+                    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 relative z-10">
+                        <div>
+                            <div class="flex flex-wrap items-center gap-2 mb-1.5">
+                                <span class="text-[11px] font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider bg-[#0A2D6A]/10 text-[#0A2D6A]">DLS-SWCE eCampus Master</span>
+                                <span id="smd_lockStatusBadge" class="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center gap-1">
+                                    <span>🔓</span> <span>Editable by Student</span>
+                                </span>
+                                <span id="smd_verificationBadge" class="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200">
+                                    Pending HOD Review
+                                </span>
+                            </div>
+                            <h2 class="text-xl sm:text-2xl font-black text-[#0A2D6A] tracking-tight">Student Master Data & Documents Registry</h2>
+                            <p class="text-xs text-slate-500 mt-1 max-w-2xl">Complete institutional master record for academic admission, university affiliation, government scholarship, and eCampus archival. One-time entry & permanent digital verification.</p>
+                        </div>
+                        <div class="flex flex-wrap items-center gap-2.5">
+                            <button type="button" id="btnSaveMasterDraft" onclick="saveStudentMasterData(false)" class="px-3.5 py-2 rounded-xl text-xs font-semibold bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 hover-lift shadow-sm flex items-center gap-1.5">
+                                <span>💾</span> <span>Save Draft</span>
+                            </button>
+                            <button type="button" id="btnSubmitMasterHOD" onclick="saveStudentMasterData(true)" class="px-4 py-2 rounded-xl text-xs font-bold bg-[#0A2D6A] hover:bg-[#082252] text-white hover-lift shadow flex items-center gap-1.5">
+                                <span>📤</span> <span>Submit to HOD</span>
+                            </button>
+                            <button type="button" onclick="printStudentMasterData()" class="px-3 py-2 rounded-xl text-xs font-medium bg-slate-100 hover:bg-slate-200 text-slate-700 transition" title="Print or Export PDF">
+                                <span>🖨️</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Mandatory Banner Notice -->
+                    <div id="masterDataMandatoryNotice" class="mt-4 p-3 bg-amber-50/80 border border-amber-200 rounded-xl flex items-start gap-2.5 text-xs text-amber-900">
+                        <span class="text-base flex-shrink-0">⚠️</span>
+                        <div class="flex-1">
+                            <span class="font-bold">HOD Office Mandate:</span> All registered students must completely fill all 8 Master Data sections and upload supporting official certificates. Once verified by the Head of Department, profile is permanently locked for data integrity.
+                        </div>
+                    </div>
+
+                    <!-- Progress Stepper -->
+                    <div class="mt-4 pt-4 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs font-bold text-slate-700">Completion Status:</span>
+                            <span id="smd_progressText" class="text-xs font-bold text-[#0A2D6A]">8/8 Sections Active</span>
+                        </div>
+                        <div class="w-full sm:w-64 bg-slate-100 rounded-full h-2 overflow-hidden">
+                            <div id="smd_progressBar" class="bg-emerald-500 h-2 rounded-full transition-all duration-500" style="width: 100%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 8-Category Navigation Tabs -->
+                <div class="bg-white rounded-2xl p-2 border border-slate-200 shadow-sm flex items-center gap-1.5 overflow-x-auto no-scrollbar" id="masterTabsNav">
+                    <button type="button" onclick="switchMasterTab('personal')" id="tabBtn_personal" class="master-tab-btn flex-shrink-0 px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 bg-[#0A2D6A] text-white">
+                        <span>👤</span> <span>1. Personal</span>
+                    </button>
+                    <button type="button" onclick="switchMasterTab('academic')" id="tabBtn_academic" class="master-tab-btn flex-shrink-0 px-3.5 py-2 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100 transition flex items-center gap-1.5">
+                        <span>🎓</span> <span>2. Academic</span>
+                    </button>
+                    <button type="button" onclick="switchMasterTab('family')" id="tabBtn_family" class="master-tab-btn flex-shrink-0 px-3.5 py-2 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100 transition flex items-center gap-1.5">
+                        <span>👨‍👩‍👧</span> <span>3. Family</span>
+                    </button>
+                    <button type="button" onclick="switchMasterTab('fees')" id="tabBtn_fees" class="master-tab-btn flex-shrink-0 px-3.5 py-2 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100 transition flex items-center gap-1.5">
+                        <span>💳</span> <span>4. Fees</span>
+                    </button>
+                    <button type="button" onclick="switchMasterTab('documents')" id="tabBtn_documents" class="master-tab-btn flex-shrink-0 px-3.5 py-2 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100 transition flex items-center gap-1.5">
+                        <span>📁</span> <span>5. Documents</span>
+                        <span id="smd_docsUploadedBadge" class="text-[10px] font-bold bg-slate-200 text-slate-700 px-1.5 py-0.2 rounded-full">0</span>
+                    </button>
+                    <button type="button" onclick="switchMasterTab('hostel')" id="tabBtn_hostel" class="master-tab-btn flex-shrink-0 px-3.5 py-2 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100 transition flex items-center gap-1.5">
+                        <span>🏢</span> <span>6. Hostel & Transport</span>
+                    </button>
+                    <button type="button" onclick="switchMasterTab('bank')" id="tabBtn_bank" class="master-tab-btn flex-shrink-0 px-3.5 py-2 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100 transition flex items-center gap-1.5">
+                        <span>🏦</span> <span>7. Bank Details</span>
+                    </button>
+                    <button type="button" onclick="switchMasterTab('official')" id="tabBtn_official" class="master-tab-btn flex-shrink-0 px-3.5 py-2 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100 transition flex items-center gap-1.5">
+                        <span>🏛️</span> <span>8. Official & Mentorship</span>
+                    </button>
+                </div>
+
+                <!-- Tab 1: Personal Details -->
+                <div id="tabContent_personal" class="master-tab-pane bg-white rounded-2xl p-5 sm:p-6 border border-slate-200 shadow-sm space-y-5">
+                    <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                        <h3 class="text-sm font-bold text-[#0A2D6A] uppercase tracking-wide flex items-center gap-2">
+                            <span>👤</span> Personal Information & Contact Identifiers
+                        </h3>
+                        <span class="text-[11px] text-slate-400 font-mono">Section 1 of 8</span>
+                    </div>
+
+                    <!-- Photo & Quick Overview -->
+                    <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200/80 flex flex-col sm:flex-row items-center gap-5">
+                        <div class="relative group">
+                            <img id="smd_photoPreview" src="" alt="Passport Photo" class="w-24 h-28 object-cover rounded-xl border-2 border-[#0A2D6A] shadow-md bg-slate-200 flex items-center justify-center text-xs text-slate-400 font-bold text-center">
+                            <label for="smd_photoInput" class="absolute inset-0 bg-black/40 text-white rounded-xl flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 cursor-pointer transition text-[10px] font-bold text-center p-1">
+                                <span>📷 Change</span>
+                                <span>Photo (Max 2MB)</span>
+                            </label>
+                            <input type="file" id="smd_photoInput" accept="image/*" class="hidden" onchange="handleMasterPhotoUpload(this)">
+                        </div>
+                        <div class="flex-1 space-y-2 text-center sm:text-left">
+                            <div class="flex flex-wrap items-center justify-center sm:justify-start gap-2">
+                                <label for="smd_photoInput" class="px-3 py-1.5 bg-[#0A2D6A] text-white text-xs font-semibold rounded-lg hover:bg-[#082252] cursor-pointer shadow-sm">
+                                    Upload Student Photo
+                                </label>
+                                <button type="button" onclick="removeMasterPhoto()" class="px-2.5 py-1.5 bg-slate-200 text-slate-700 text-xs font-semibold rounded-lg hover:bg-slate-300">
+                                    Remove
+                                </button>
+                                <span class="text-[11px] text-slate-500 font-medium">Formal passport size, White background (JPG/PNG max 2MB)</span>
+                            </div>
+                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2 border-t border-slate-200 text-[11px]">
+                                <div><span class="text-slate-500">Auto Student ID:</span> <span id="smd_displayStudentId" class="font-mono font-bold text-[#0A2D6A]">SWCE-2026-CSE-042</span></div>
+                                <div><span class="text-slate-500">Roll No:</span> <span id="smd_displayRollNo" class="font-mono font-bold text-slate-800">721124243067</span></div>
+                                <div><span class="text-slate-500">Reg No:</span> <span id="smd_displayRegNo" class="font-mono font-bold text-slate-800">721124243067</span></div>
+                                <div><span class="text-slate-500">Blood Group:</span> <span id="smd_displayBlood" class="font-bold text-rose-600">O+ve</span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 text-xs">
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">First Name <span class="text-rose-500">*</span></label>
+                            <input type="text" id="smd_firstName" class="smd-input w-full px-3 py-2 border border-slate-200 rounded-xl font-semibold" placeholder="e.g. Sakthi">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">Last Name <span class="text-rose-500">*</span></label>
+                            <input type="text" id="smd_lastName" class="smd-input w-full px-3 py-2 border border-slate-200 rounded-xl font-semibold" placeholder="e.g. Madhavan">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">Date of Birth <span class="text-rose-500">*</span></label>
+                            <input type="date" id="smd_dob" class="smd-input w-full px-3 py-2 border border-slate-200 rounded-xl font-mono">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">Gender <span class="text-rose-500">*</span></label>
+                            <select id="smd_gender" class="smd-input w-full px-3 py-2 border border-slate-200 rounded-xl font-semibold">
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">Blood Group <span class="text-rose-500">*</span></label>
+                            <select id="smd_bloodGroup" class="smd-input w-full px-3 py-2 border border-slate-200 rounded-xl font-semibold">
+                                <option value="A+">A+ve</option>
+                                <option value="A-">A-ve</option>
+                                <option value="B+">B+ve</option>
+                                <option value="B-">B-ve</option>
+                                <option value="O+" selected>O+ve</option>
+                                <option value="O-">O-ve</option>
+                                <option value="AB+">AB+ve</option>
+                                <option value="AB-">AB-ve</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">Aadhar Number (12 Digits) <span class="text-rose-500">*</span></label>
+                            <input type="text" id="smd_aadhar" maxlength="12" class="smd-input w-full px-3 py-2 border border-slate-200 rounded-xl font-mono" placeholder="xxxx xxxx xxxx">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">Student Mobile Number <span class="text-rose-500">*</span></label>
+                            <input type="text" id="smd_mobile" maxlength="10" class="smd-input w-full px-3 py-2 border border-slate-200 rounded-xl font-mono" placeholder="9123456780">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">Alternate Mobile Number</label>
+                            <input type="text" id="smd_altMobile" maxlength="10" class="smd-input w-full px-3 py-2 border border-slate-200 rounded-xl font-mono" placeholder="9876543210">
+                        </div>
+
+                        <div class="sm:col-span-2">
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">Student Email ID (Institutional / Registered)</label>
+                            <input type="email" id="smd_email" readonly class="w-full px-3 py-2 bg-slate-100 border border-slate-200 rounded-xl font-mono text-slate-600">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">Community <span class="text-rose-500">*</span></label>
+                            <select id="smd_community" class="smd-input w-full px-3 py-2 border border-slate-200 rounded-xl font-semibold">
+                                <option value="BC">BC (Backward Class)</option>
+                                <option value="BCM">BCM (Backward Muslim)</option>
+                                <option value="MBC">MBC (Most Backward Class)</option>
+                                <option value="DNC">DNC (Denotified Communities)</option>
+                                <option value="SC">SC (Scheduled Caste)</option>
+                                <option value="SCA">SCA (SC Arunthathiyar)</option>
+                                <option value="ST">ST (Scheduled Tribe)</option>
+                                <option value="OC">OC (Open Competition / General)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">Mother Tongue</label>
+                            <input type="text" id="smd_motherTongue" class="smd-input w-full px-3 py-2 border border-slate-200 rounded-xl" placeholder="Tamil, English, etc.">
+                        </div>
+
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">Religion</label>
+                            <input type="text" id="smd_religion" class="smd-input w-full px-3 py-2 border border-slate-200 rounded-xl" placeholder="Hindu, Muslim, Christian, etc.">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">Nationality</label>
+                            <input type="text" id="smd_nationality" value="Indian" class="smd-input w-full px-3 py-2 border border-slate-200 rounded-xl">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">District <span class="text-rose-500">*</span></label>
+                            <input type="text" id="smd_district" class="smd-input w-full px-3 py-2 border border-slate-200 rounded-xl" placeholder="Coimbatore">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">State</label>
+                            <input type="text" id="smd_state" value="Tamil Nadu" class="smd-input w-full px-3 py-2 border border-slate-200 rounded-xl">
+                        </div>
+
+                        <div class="sm:col-span-2">
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">Permanent Residential Address <span class="text-rose-500">*</span></label>
+                            <textarea id="smd_addressPerm" rows="2" class="smd-input w-full px-3 py-2 border border-slate-200 rounded-xl" placeholder="Door No, Street Name, Village / City"></textarea>
+                        </div>
+                        <div class="sm:col-span-2">
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">Current / Communication Address</label>
+                            <textarea id="smd_addressCurr" rows="2" class="smd-input w-full px-3 py-2 border border-slate-200 rounded-xl" placeholder="Same as permanent or hostel address"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab 2: Academic Details -->
+                <div id="tabContent_academic" class="master-tab-pane hidden bg-white rounded-2xl p-5 sm:p-6 border border-slate-200 shadow-sm space-y-5">
+                    <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                        <h3 class="text-sm font-bold text-[#0A2D6A] uppercase tracking-wide flex items-center gap-2">
+                            <span>🎓</span> Academic Qualifications & College Admissions
+                        </h3>
+                        <span class="text-[11px] text-slate-400 font-mono">Section 2 of 8</span>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 text-xs">
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">Department <span class="text-rose-500">*</span></label>
+                            <select id="smd_dept" class="smd-input w-full px-3 py-2 border border-slate-200 rounded-xl font-semibold">
+                                <option value="CSE">Computer Science & Engineering (CSE)</option>
+                                <option value="ECE">Electronics & Comm Engineering (ECE)</option>
+                                <option value="MECH">Mechanical Engineering (MECH)</option>
+                                <option value="AIDS">AI & Data Science (AIDS)</option>
+                                <option value="CIVIL">Civil Engineering</option>
+                                <option value="EEE">Electrical & Electronics Engg (EEE)</option>
+                                <option value="IT">Information Technology (IT)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">Current Academic Year <span class="text-rose-500">*</span></label>
+                            <select id="smd_year" class="smd-input w-full px-3 py-2 border border-slate-200 rounded-xl font-semibold">
+                                <option value="I">1st Year</option>
+                                <option value="II">2nd Year</option>
+                                <option value="III" selected>3rd Year</option>
+                                <option value="IV">4th Year</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">Current Semester <span class="text-rose-500">*</span></label>
+                            <select id="smd_sem" class="smd-input w-full px-3 py-2 border border-slate-200 rounded-xl font-semibold">
+                                <option value="1">Semester 1</option>
+                                <option value="2">Semester 2</option>
+                                <option value="3">Semester 3</option>
+                                <option value="4">Semester 4</option>
+                                <option value="5">Semester 5</option>
+                                <option value="6" selected>Semester 6</option>
+                                <option value="7">Semester 7</option>
+                                <option value="8">Semester 8</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">Academic Batch <span class="text-rose-500">*</span></label>
+                            <input type="text" id="smd_batch" class="smd-input w-full px-3 py-2 border border-slate-200 rounded-xl font-mono" placeholder="2024 - 2028">
+                        </div>
+
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">Admission Quota / Type <span class="text-rose-500">*</span></label>
+                            <select id="smd_admType" class="smd-input w-full px-3 py-2 border border-slate-200 rounded-xl font-semibold">
+                                <option value="GQ">Government Quota (TNEA / Single Window)</option>
+                                <option value="MQ">Management Quota</option>
+                                <option value="Lateral">Lateral Entry (Direct 2nd Year)</option>
+                                <option value="Sports">Sports Quota</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">Admission Date</label>
+                            <input type="date" id="smd_admDate" class="smd-input w-full px-3 py-2 border border-slate-200 rounded-xl font-mono">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">Cumulative CGPA</label>
+                            <input type="number" step="0.01" id="smd_cgpa" class="smd-input w-full px-3 py-2 border border-slate-200 rounded-xl font-mono font-bold" placeholder="8.65">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">Attendance % <span class="text-rose-500">*</span></label>
+                            <input type="number" id="smd_attendance" class="smd-input w-full px-3 py-2 border border-slate-200 rounded-xl font-mono font-bold text-emerald-700" placeholder="94">
+                        </div>
+
+                        <!-- 10th Standard Schooling -->
+                        <div class="sm:col-span-2">
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">10th (SSLC) School Name <span class="text-rose-500">*</span></label>
+                            <input type="text" id="smd_tenthSchool" class="smd-input w-full px-3 py-2 border border-slate-200 rounded-xl" placeholder="Government Higher Secondary School, Coimbatore">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">10th Marks % <span class="text-rose-500">*</span></label>
+                            <input type="text" id="smd_tenthPercent" class="smd-input w-full px-3 py-2 border border-slate-200 rounded-xl font-mono" placeholder="92.4%">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">10th Board</label>
+                            <select id="smd_tenthBoard" class="smd-input w-full px-3 py-2 border border-slate-200 rounded-xl">
+                                <option value="Tamil Nadu State Board">Tamil Nadu State Board</option>
+                                <option value="CBSE">CBSE</option>
+                                <option value="ICSE">ICSE</option>
+                                <option value="Other">Other State Board</option>
+                            </select>
+                        </div>
+
+                        <!-- 12th Standard / Diploma Schooling -->
+                        <div class="sm:col-span-2">
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">12th (HSC) / Diploma School or Polytechnic Name <span class="text-rose-500">*</span></label>
+                            <input type="text" id="smd_twelfthSchool" class="smd-input w-full px-3 py-2 border border-slate-200 rounded-xl" placeholder="St. Joseph Higher Secondary School">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">12th Marks % <span class="text-rose-500">*</span></label>
+                            <input type="text" id="smd_twelfthPercent" class="smd-input w-full px-3 py-2 border border-slate-200 rounded-xl font-mono" placeholder="89.5%">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">TNEA Engineering Cutoff</label>
+                            <input type="number" step="0.25" id="smd_twelfthCutoff" class="smd-input w-full px-3 py-2 border border-slate-200 rounded-xl font-mono font-bold text-[#0A2D6A]" placeholder="184.5">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab 3: Family Details -->
+                <div id="tabContent_family" class="master-tab-pane hidden bg-white rounded-2xl p-5 sm:p-6 border border-slate-200 shadow-sm space-y-5">
+                    <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                        <h3 class="text-sm font-bold text-[#0A2D6A] uppercase tracking-wide flex items-center gap-2">
+                            <span>👨‍👩‍👧</span> Parent & Guardian Information & Emergency Contact
+                        </h3>
+                        <span class="text-[11px] text-slate-400 font-mono">Section 3 of 8</span>
+                    </div>
+
+                    <!-- Father Details -->
+                    <div class="p-4 bg-slate-50/70 rounded-2xl border border-slate-200/80 space-y-3">
+                        <h4 class="text-xs font-bold text-[#0A2D6A] uppercase tracking-wider flex items-center gap-2">
+                            <span>👔</span> Father's Particulars
+                        </h4>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 text-xs">
+                            <div>
+                                <label class="block text-[11px] font-bold text-slate-700 mb-1">Father's Full Name <span class="text-rose-500">*</span></label>
+                                <input type="text" id="smd_fatherName" class="smd-input w-full px-3 py-2 border border-slate-200 rounded-xl font-semibold" placeholder="Madhavan R">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-bold text-slate-700 mb-1">Father's Occupation</label>
+                                <input type="text" id="smd_fatherOcc" class="smd-input w-full px-3 py-2 border border-slate-200 rounded-xl" placeholder="Agriculture / Business">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-bold text-slate-700 mb-1">Father Mobile Number <span class="text-rose-500">*</span></label>
+                                <input type="text" id="smd_fatherMobile" maxlength="10" class="smd-input w-full px-3 py-2 border border-slate-200 rounded-xl font-mono" placeholder="9876543210">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-bold text-slate-700 mb-1">Father Annual Income (₹)</label>
+                                <input type="text" id="smd_fatherIncome" class="smd-input w-full px-3 py-2 border border-slate-200 rounded-xl font-mono" placeholder="1,50,000">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Mother Details -->
+                    <div class="p-4 bg-slate-50/70 rounded-2xl border border-slate-200/80 space-y-3">
+                        <h4 class="text-xs font-bold text-[#0A2D6A] uppercase tracking-wider flex items-center gap-2">
+                            <span>🥻</span> Mother's Particulars
+                        </h4>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 text-xs">
+                            <div>
+                                <label class="block text-[11px] font-bold text-slate-700 mb-1">Mother's Full Name <span class="text-rose-500">*</span></label>
+                                <input type="text" id="smd_motherName" class="smd-input w-full px-3 py-2 border border-slate-200 rounded-xl font-semibold" placeholder="Lakshmi M">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-bold text-slate-700 mb-1">Mother's Occupation</label>
+                                <input type="text" id="smd_motherOcc" class="smd-input w-full px-3 py-2 border border-slate-200 rounded-xl" placeholder="Homemaker / Teacher">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-bold text-slate-700 mb-1">Mother Mobile Number</label>
+                                <input type="text" id="smd_motherMobile" maxlength="10" class="smd-input w-full px-3 py-2 border border-slate-200 rounded-xl font-mono" placeholder="9876543211">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-bold text-slate-700 mb-1">Mother Annual Income (₹)</label>
+                                <input type="text" id="smd_motherIncome" class="smd-input w-full px-3 py-2 border border-slate-200 rounded-xl font-mono" placeholder="0">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Guardian & Emergency Contacts -->
+                    <div class="p-4 bg-slate-50/70 rounded-2xl border border-slate-200/80 space-y-3">
+                        <h4 class="text-xs font-bold text-[#0A2D6A] uppercase tracking-wider flex items-center gap-2">
+                            <span>🛡️</span> Guardian Details & Emergency Hotline
+                        </h4>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 text-xs">
+                            <div>
+                                <label class="block text-[11px] font-bold text-slate-700 mb-1">Guardian Name (if applicable)</label>
+                                <input type="text" id="smd_guardianName" class="smd-input w-full px-3 py-2 border border-slate-200 rounded-xl" placeholder="Uncle / Elder Brother">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-bold text-slate-700 mb-1">Relationship with Student</label>
+                                <input type="text" id="smd_guardianRel" class="smd-input w-full px-3 py-2 border border-slate-200 rounded-xl" placeholder="Uncle">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-bold text-slate-700 mb-1">Guardian Mobile Number</label>
+                                <input type="text" id="smd_guardianMobile" maxlength="10" class="smd-input w-full px-3 py-2 border border-slate-200 rounded-xl font-mono" placeholder="9876543212">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-bold text-slate-700 mb-1">Emergency Hotline Mobile <span class="text-rose-500">*</span></label>
+                                <input type="text" id="smd_emergencyMobile" maxlength="10" class="smd-input w-full px-3 py-2 border border-slate-200 rounded-xl font-mono font-bold text-rose-600" placeholder="9876543210">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs pt-2 border-t border-slate-100">
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">Total Family Annual Income (₹) <span class="text-rose-500">*</span></label>
+                            <input type="text" id="smd_familyIncome" class="smd-input w-full px-3 py-2 border border-slate-200 rounded-xl font-mono font-bold text-[#0A2D6A]" placeholder="1,50,000">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">Number of Siblings</label>
+                            <input type="number" id="smd_siblingsCount" class="smd-input w-full px-3 py-2 border border-slate-200 rounded-xl font-mono" placeholder="1">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">First Graduate in Family?</label>
+                            <select id="smd_firstGraduateFlag" class="smd-input w-full px-3 py-2 border border-slate-200 rounded-xl font-semibold">
+                                <option value="Yes">Yes (Eligible for FG Concession)</option>
+                                <option value="No" selected>No</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab 4: Fees Details -->
+                <div id="tabContent_fees" class="master-tab-pane hidden bg-white rounded-2xl p-5 sm:p-6 border border-slate-200 shadow-sm space-y-5">
+                    <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                        <h3 class="text-sm font-bold text-[#0A2D6A] uppercase tracking-wide flex items-center gap-2">
+                            <span>💳</span> Prescribed Fees, Govt Scholarship & Payment Balances
+                        </h3>
+                        <span class="text-[11px] text-slate-400 font-mono">Section 4 of 8</span>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
+                        <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200">
+                            <span class="text-slate-500 font-bold uppercase text-[10px]">Total Prescribed Fee (Per Year)</span>
+                            <div class="flex items-center gap-2 mt-1">
+                                <span class="text-xl font-black font-mono text-[#0A2D6A]" id="smd_feeTotalDisplay">₹1,33,500</span>
+                            </div>
+                            <p class="text-[11px] text-slate-500 mt-1">Includes Tuition, Special/Lab & Host/Transport</p>
+                        </div>
+                        <div class="p-4 rounded-2xl bg-emerald-50/70 border border-emerald-200">
+                            <span class="text-emerald-700 font-bold uppercase text-[10px]">Total Paid Amount</span>
+                            <div class="flex items-center gap-2 mt-1">
+                                <span class="text-xl font-black font-mono text-emerald-700" id="smd_feePaidDisplay">₹90,000</span>
+                            </div>
+                            <p class="text-[11px] text-emerald-600 mt-1">Verified by College Accounts Office</p>
+                        </div>
+                        <div class="p-4 rounded-2xl bg-rose-50/70 border border-rose-200">
+                            <span class="text-rose-700 font-bold uppercase text-[10px]">Remaining Balance Due</span>
+                            <div class="flex items-center gap-2 mt-1">
+                                <span class="text-xl font-black font-mono text-rose-700" id="smd_feeRemainingDisplay">₹43,500</span>
+                            </div>
+                            <p class="text-[11px] text-rose-600 mt-1">Due before Semester Examination</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 text-xs pt-2">
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">Scholarship Category</label>
+                            <select id="smd_scholarshipType" class="smd-input w-full px-3 py-2 border border-slate-200 rounded-xl font-semibold">
+                                <option value="None">None (General Self-Financed)</option>
+                                <option value="First Graduate">First Graduate (TN Govt ₹25,000 Concession)</option>
+                                <option value="Post-Matric SC/ST">Post-Matric SC / ST Welfare Scholarship</option>
+                                <option value="BC/MBC Welfare">BC / MBC Welfare Scholarship</option>
+                                <option value="7.5% Govt School">7.5% Tamil Nadu Govt School Quota</option>
+                                <option value="Institutional Merit">SWCE Institutional Merit Scholarship</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">Govt Concession / Scholarship Amount (₹)</label>
+                            <input type="text" id="smd_scholarshipAmount" class="smd-input w-full px-3 py-2 border border-slate-200 rounded-xl font-mono font-bold text-emerald-700" placeholder="25,000">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">Scholarship / EMIS ID</label>
+                            <input type="text" id="smd_scholarshipId" class="smd-input w-full px-3 py-2 border border-slate-200 rounded-xl font-mono" placeholder="EMIS-TN-2026-9912">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab 5: Documents Upload -->
+                <div id="tabContent_documents" class="master-tab-pane hidden bg-white rounded-2xl p-5 sm:p-6 border border-slate-200 shadow-sm space-y-5">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100">
+                        <div>
+                            <h3 class="text-sm font-bold text-[#0A2D6A] uppercase tracking-wide flex items-center gap-2">
+                                <span>📁</span> Official Certificates & Identification Documents Upload
+                            </h3>
+                            <p class="text-xs text-slate-500 mt-0.5">Upload clear scanned copies (PDF, JPG, PNG). Max 2MB per document. All documents are encrypted & archived.</p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button type="button" onclick="downloadAllMyDocumentsZip()" class="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm transition">
+                                <span>📦</span> <span>Download All Docs ZIP</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Document Upload Cards Grid -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 text-xs" id="masterDocsGrid">
+                        <!-- Upload cards dynamically populated and rendered -->
+                    </div>
+                </div>
+
+                <!-- Tab 6: Hostel & Transport -->
+                <div id="tabContent_hostel" class="master-tab-pane hidden bg-white rounded-2xl p-5 sm:p-6 border border-slate-200 shadow-sm space-y-5">
+                    <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                        <h3 class="text-sm font-bold text-[#0A2D6A] uppercase tracking-wide flex items-center gap-2">
+                            <span>🏢</span> Accommodation, Campus Hostel & College Transport
+                        </h3>
+                        <span class="text-[11px] text-slate-400 font-mono">Section 6 of 8</span>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 text-xs">
+                        <div class="sm:col-span-2">
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">Accommodation Status <span class="text-rose-500">*</span></label>
+                            <select id="smd_accommodation" onchange="handleAccommodationChange(this.value)" class="smd-input w-full px-3 py-2 border border-slate-200 rounded-xl font-semibold">
+                                <option value="Day Scholar">Day Scholar (Commuting from Home)</option>
+                                <option value="Hosteller">Campus Hosteller (Resident in SWCE Hostel)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">Hostel Block Name</label>
+                            <input type="text" id="smd_hostelBlock" class="smd-input w-full px-3 py-2 border border-slate-200 rounded-xl" placeholder="Kurinji Boys Block A">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">Hostel Room Number</label>
+                            <input type="text" id="smd_roomNo" class="smd-input w-full px-3 py-2 border border-slate-200 rounded-xl font-mono" placeholder="204-B">
+                        </div>
+
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">Hostel Mess Food Preference</label>
+                            <select id="smd_messType" class="smd-input w-full px-3 py-2 border border-slate-200 rounded-xl font-semibold">
+                                <option value="Non-Veg">Non-Vegetarian</option>
+                                <option value="Veg">Vegetarian</option>
+                                <option value="Special Diet">Special Diet</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">College Transport / Commute Mode</label>
+                            <select id="smd_transportMode" class="smd-input w-full px-3 py-2 border border-slate-200 rounded-xl font-semibold">
+                                <option value="College Bus">SWCE College Bus</option>
+                                <option value="Two Wheeler">Two Wheeler (Personal Bike/Scooter)</option>
+                                <option value="Public Transport">Public Bus / Train</option>
+                                <option value="Hostel Walk">Resident on Campus</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">College Bus Route No.</label>
+                            <input type="text" id="smd_busRoute" class="smd-input w-full px-3 py-2 border border-slate-200 rounded-xl font-mono" placeholder="Route 14 - Gandhipuram">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">Boarding Stop Name</label>
+                            <input type="text" id="smd_busStop" class="smd-input w-full px-3 py-2 border border-slate-200 rounded-xl" placeholder="Gandhipuram Bus Stand">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab 7: Bank Details -->
+                <div id="tabContent_bank" class="master-tab-pane hidden bg-white rounded-2xl p-5 sm:p-6 border border-slate-200 shadow-sm space-y-5">
+                    <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                        <h3 class="text-sm font-bold text-[#0A2D6A] uppercase tracking-wide flex items-center gap-2">
+                            <span>🏦</span> Student Bank Account (Govt Scholarship & DBT Remittance)
+                        </h3>
+                        <span class="text-[11px] text-slate-400 font-mono">Section 7 of 8</span>
+                    </div>
+
+                    <div class="p-3.5 bg-blue-50/70 border border-blue-200 rounded-xl flex items-center gap-2.5 text-xs text-blue-900">
+                        <span class="text-base flex-shrink-0">🔒</span>
+                        <div>
+                            <span class="font-bold">Security & Privacy Compliance:</span> Account numbers are encrypted. Masked as <code class="font-mono font-bold">****1234</code> for staff and HOD; full digits are visible only to the Principal.
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 text-xs">
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">Bank Name <span class="text-rose-500">*</span></label>
+                            <input type="text" id="smd_bankName" class="smd-input w-full px-3 py-2 border border-slate-200 rounded-xl font-semibold" placeholder="State Bank of India (SBI)">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">Account Holder Name (As in Passbook) <span class="text-rose-500">*</span></label>
+                            <input type="text" id="smd_accountHolder" class="smd-input w-full px-3 py-2 border border-slate-200 rounded-xl font-semibold" placeholder="Sakthi Madhavan">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">Bank Account Number <span class="text-rose-500">*</span></label>
+                            <input type="text" id="smd_accountNo" class="smd-input w-full px-3 py-2 border border-slate-200 rounded-xl font-mono" placeholder="Enter Bank Account Number">
+                        </div>
+
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">IFSC Code (11 Alpha-Numeric) <span class="text-rose-500">*</span></label>
+                            <input type="text" id="smd_ifsc" maxlength="11" class="smd-input w-full px-3 py-2 border border-slate-200 rounded-xl font-mono uppercase font-bold" placeholder="SBIN0001234">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">Branch Name</label>
+                            <input type="text" id="smd_bankBranch" class="smd-input w-full px-3 py-2 border border-slate-200 rounded-xl" placeholder="Madukkarai Branch, Coimbatore">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">MICR Code</label>
+                            <input type="text" id="smd_micr" class="smd-input w-full px-3 py-2 border border-slate-200 rounded-xl font-mono" placeholder="641002014">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab 8: Official & Mentorship -->
+                <div id="tabContent_official" class="master-tab-pane hidden bg-white rounded-2xl p-5 sm:p-6 border border-slate-200 shadow-sm space-y-5">
+                    <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                        <h3 class="text-sm font-bold text-[#0A2D6A] uppercase tracking-wide flex items-center gap-2">
+                            <span>🏛️</span> Institutional Affiliation, Mentorship & HOD Lock Status
+                        </h3>
+                        <span class="text-[11px] text-slate-400 font-mono">Section 8 of 8</span>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 text-xs">
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">Student Auto ID</label>
+                            <input type="text" id="smd_officialStudentId" readonly class="w-full px-3 py-2 bg-slate-100 border border-slate-200 rounded-xl font-mono font-bold text-[#0A2D6A]">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">College Admission Number</label>
+                            <input type="text" id="smd_admissionNo" class="smd-input w-full px-3 py-2 border border-slate-200 rounded-xl font-mono font-bold" placeholder="SWCE/ADM/2024/042">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">Anna University Reg Number</label>
+                            <input type="text" id="smd_officialRegNo" readonly class="w-full px-3 py-2 bg-slate-100 border border-slate-200 rounded-xl font-mono font-bold text-slate-800">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">Faculty Advisor / Mentor</label>
+                            <input type="text" id="smd_mentorName" class="smd-input w-full px-3 py-2 border border-slate-200 rounded-xl font-semibold" placeholder="Dr. P. Senthil Kumar">
+                        </div>
+                    </div>
+
+                    <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
+                        <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wider">HOD Master Verification & Profile Locking</h4>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+                            <div>
+                                <span class="text-slate-500 block text-[11px]">HOD Verification Status:</span>
+                                <span id="smd_officialVerificationStatus" class="font-bold text-amber-700 text-sm">Pending Review</span>
+                            </div>
+                            <div>
+                                <span class="text-slate-500 block text-[11px]">Verified Date & Time:</span>
+                                <span id="smd_officialVerifiedDate" class="font-mono font-semibold text-slate-700">Not Yet Verified</span>
+                            </div>
+                            <div>
+                                <span class="text-slate-500 block text-[11px]">Profile Lock Status:</span>
+                                <span id="smd_officialLockStatus" class="font-bold text-emerald-700 text-sm">Unlocked for Student</span>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">HOD Office Remarks / Notes</label>
+                            <p id="smd_officialHodRemarks" class="text-xs text-slate-600 italic bg-white p-3 rounded-xl border border-slate-200">No remarks entered yet.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Page: All Students Data & Documents (HOD / Principal / Faculty Master View) -->
+            <div id="page-all-students-data" class="page hidden space-y-6 pb-12">
+                <!-- Header -->
+                <div class="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200 shadow-sm flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                    <div>
+                        <div class="flex items-center gap-2 mb-1">
+                            <span class="text-[11px] font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider bg-[#0A2D6A]/10 text-[#0A2D6A]">Institutional Central Repository</span>
+                            <span class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200">Live Master Records</span>
+                        </div>
+                        <h1 class="text-xl font-bold text-[#0A2D6A]">All Students Data & Documents</h1>
+                        <p class="text-xs text-slate-500 mt-0.5">Comprehensive view of student academic profiles, biometric credentials, fee accounts, and verified document vaults.</p>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-2.5">
+                        <button type="button" id="exportExcelBtn" onclick="exportAllStudentsExcel()" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white hover-lift shadow-sm flex items-center gap-1.5 transition">
+                            <span>📊</span> <span>Export Excel</span>
+                        </button>
+                        <button type="button" id="bulkDownloadZipBtn" onclick="bulkDownloadStudentDocsZip()" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-[#0A2D6A] hover:bg-[#082252] text-white hover-lift shadow-sm flex items-center gap-1.5 transition">
+                            <span>📦</span> <span>Download All Docs ZIP</span>
+                        </button>
+                        <button type="button" onclick="openDataAccessLogsModal()" class="px-3 py-2 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 transition flex items-center gap-1.5" title="Audit Logs of Profile Access">
+                            <span>🛡️</span> <span>Access Logs</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Top 4 Metric Cards -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <!-- Total Students -->
+                    <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-xl bg-[#0A2D6A]/10 text-[#0A2D6A] flex items-center justify-center text-2xl flex-shrink-0">
+                            👥
+                        </div>
+                        <div>
+                            <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Total Students</span>
+                            <span id="cardTotalStudents" class="text-2xl font-black text-[#0A2D6A] font-mono">5</span>
+                            <span class="text-[10px] text-slate-500 block mt-0.5">Active in Registry</span>
+                        </div>
+                    </div>
+
+                    <!-- Dept-Wise Distribution -->
+                    <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
+                        <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Dept Wise</span>
+                        <div class="flex flex-wrap gap-1.5 mt-1.5" id="cardDeptStats">
+                            <span class="px-2 py-0.5 bg-blue-50 text-[#0A2D6A] rounded-md text-[10px] font-bold font-mono">CSE: 2</span>
+                            <span class="px-2 py-0.5 bg-amber-50 text-amber-800 rounded-md text-[10px] font-bold font-mono">MECH: 1</span>
+                            <span class="px-2 py-0.5 bg-purple-50 text-purple-800 rounded-md text-[10px] font-bold font-mono">ECE: 1</span>
+                            <span class="px-2 py-0.5 bg-emerald-50 text-emerald-800 rounded-md text-[10px] font-bold font-mono">AIDS: 1</span>
+                        </div>
+                    </div>
+
+                    <!-- Fees Pending -->
+                    <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center text-2xl flex-shrink-0">
+                            💰
+                        </div>
+                        <div>
+                            <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Fees Pending</span>
+                            <div class="flex items-baseline gap-1.5">
+                                <span id="cardFeesPendingCount" class="text-2xl font-black text-rose-600 font-mono">2</span>
+                                <span id="cardFeesPendingAmount" class="text-xs font-bold text-slate-500 font-mono">(₹68,500)</span>
+                            </div>
+                            <span class="text-[10px] text-slate-500 block mt-0.5">Students with dues</span>
+                        </div>
+                    </div>
+
+                    <!-- Docs Pending Verification -->
+                    <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-2xl flex-shrink-0">
+                            📑
+                        </div>
+                        <div>
+                            <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Docs Pending</span>
+                            <span id="cardDocsPending" class="text-2xl font-black text-amber-600 font-mono">3</span>
+                            <span class="text-[10px] text-slate-500 block mt-0.5">Requires HOD Review</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Search & Filters Toolbar -->
+                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-3">
+                    <div class="flex flex-col md:flex-row items-stretch md:items-center gap-3">
+                        <!-- Search Bar -->
+                        <div class="relative flex-1">
+                            <input type="text" id="searchAllStudents" oninput="filterAllStudentsTable()" placeholder="Search by Student Name, Roll No, Reg No, Mobile, Email, Aadhar..." class="w-full pl-9 pr-4 py-2.5 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:border-[#0A2D6A] outline-none font-medium">
+                            <svg class="w-4 h-4 text-slate-400 absolute left-3 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button type="button" onclick="resetAllStudentsFilters()" class="px-3 py-2 text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl transition whitespace-nowrap">
+                                Reset Filters
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Comprehensive Filter Dropdowns -->
+                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-8 gap-2 text-[11px]">
+                        <div>
+                            <select id="filterDept" onchange="filterAllStudentsTable()" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl font-medium">
+                                <option value="All">All Depts</option>
+                                <option value="CSE">CSE</option>
+                                <option value="ECE">ECE</option>
+                                <option value="MECH">MECH</option>
+                                <option value="AIDS">AIDS</option>
+                                <option value="CIVIL">CIVIL</option>
+                                <option value="EEE">EEE</option>
+                                <option value="IT">IT</option>
+                            </select>
+                        </div>
+                        <div>
+                            <select id="filterYear" onchange="filterAllStudentsTable()" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl font-medium">
+                                <option value="All">All Years</option>
+                                <option value="I">1st Year</option>
+                                <option value="II">2nd Year</option>
+                                <option value="III">3rd Year</option>
+                                <option value="IV">4th Year</option>
+                            </select>
+                        </div>
+                        <div>
+                            <select id="filterSem" onchange="filterAllStudentsTable()" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl font-medium">
+                                <option value="All">All Sems</option>
+                                <option value="1">Sem 1</option>
+                                <option value="2">Sem 2</option>
+                                <option value="3">Sem 3</option>
+                                <option value="4">Sem 4</option>
+                                <option value="5">Sem 5</option>
+                                <option value="6">Sem 6</option>
+                                <option value="7">Sem 7</option>
+                                <option value="8">Sem 8</option>
+                            </select>
+                        </div>
+                        <div>
+                            <select id="filterBatch" onchange="filterAllStudentsTable()" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl font-medium">
+                                <option value="All">All Batches</option>
+                                <option value="2024-2028">2024-2028</option>
+                                <option value="2023-2027">2023-2027</option>
+                                <option value="2022-2026">2022-2026</option>
+                            </select>
+                        </div>
+                        <div>
+                            <select id="filterGender" onchange="filterAllStudentsTable()" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl font-medium">
+                                <option value="All">All Genders</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                            </select>
+                        </div>
+                        <div>
+                            <select id="filterCommunity" onchange="filterAllStudentsTable()" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl font-medium">
+                                <option value="All">All Communities</option>
+                                <option value="BC">BC</option>
+                                <option value="BCM">BCM</option>
+                                <option value="MBC">MBC</option>
+                                <option value="SC">SC</option>
+                                <option value="ST">ST</option>
+                                <option value="OC">OC</option>
+                            </select>
+                        </div>
+                        <div>
+                            <select id="filterHostel" onchange="filterAllStudentsTable()" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl font-medium">
+                                <option value="All">Hostel / Day</option>
+                                <option value="Hosteller">Hosteller</option>
+                                <option value="Day Scholar">Day Scholar</option>
+                            </select>
+                        </div>
+                        <div>
+                            <select id="filterFeesStatus" onchange="filterAllStudentsTable()" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl font-medium">
+                                <option value="All">All Fees Status</option>
+                                <option value="Cleared">Cleared (₹0)</option>
+                                <option value="Pending">Pending Dues</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bulk Selection Action Bar -->
+                <div id="allStudentsBulkBar" class="bg-[#0A2D6A] text-white p-3 rounded-2xl flex flex-wrap items-center justify-between gap-3 shadow-md hidden">
+                    <div class="flex items-center gap-3 text-xs font-bold">
+                        <span id="allStudentsSelectedCount">0 Students Selected</span>
+                        <span class="text-white/40">|</span>
+                        <span class="text-white/80 text-[11px]">Bulk operational commands</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button type="button" onclick="bulkHODVerifySelected()" class="px-3 py-1.5 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg text-xs font-bold transition">
+                            ✓ HOD Verify & Lock Selected
+                        </button>
+                        <button type="button" onclick="bulkDownloadSelectedZip()" class="px-3 py-1.5 bg-white text-[#0A2D6A] hover:bg-slate-100 rounded-lg text-xs font-bold transition">
+                            📦 Download Selected ZIP
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Master Student Records Table -->
+                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-slate-50 border-b border-slate-200 text-[11px] font-bold text-slate-600 uppercase tracking-wider">
+                                    <th class="p-3 text-center w-10">
+                                        <input type="checkbox" id="selectAllStudentsCheckbox" onchange="toggleSelectAllStudents(this)" class="rounded border-slate-300 text-[#0A2D6A]">
+                                    </th>
+                                    <th class="p-3">Student</th>
+                                    <th class="p-3">Roll / Reg No</th>
+                                    <th class="p-3">Dept / Year</th>
+                                    <th class="p-3">Mobile / Email</th>
+                                    <th class="p-3">Total Fee</th>
+                                    <th class="p-3">Paid</th>
+                                    <th class="p-3">Remaining</th>
+                                    <th class="p-3">Documents</th>
+                                    <th class="p-3 text-center">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="allStudentsTableBody" class="text-xs divide-y divide-slate-100">
+                                <!-- Dynamic rows rendered here -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="allStudentsEmptyState" class="hidden p-12 text-center text-slate-400 space-y-2">
+                        <span class="text-4xl block">🔍</span>
+                        <p class="text-sm font-semibold">No student records match the selected filter criteria.</p>
+                        <button type="button" onclick="resetAllStudentsFilters()" class="text-xs text-[#0A2D6A] underline font-bold">Clear all filters</button>
+                    </div>
+                </div>
+            </div>

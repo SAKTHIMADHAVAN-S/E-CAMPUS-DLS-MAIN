@@ -1,0 +1,162 @@
+
+    <!-- View Full Profile Modal (8 Categories, Document Verification & Previews) -->
+    <div id="fullProfileModal" class="fixed inset-0 bg-black/60 backdrop modal-backdrop hidden z-50 flex items-center justify-center p-2 sm:p-4 overflow-y-auto">
+        <div class="bg-white rounded-2xl w-full max-w-5xl modal-scale border border-slate-200 shadow-2xl overflow-hidden my-auto max-h-[95vh] flex flex-col">
+            <!-- Sticky Modal Header -->
+            <div class="p-4 sm:p-5 bg-gradient-to-r from-[#0A2D6A] to-[#13408b] text-white flex flex-col sm:flex-row sm:items-center justify-between gap-3 flex-shrink-0">
+                <div class="flex items-center gap-3.5 min-w-0">
+                    <img id="modalStudentPhoto" src="" alt="Photo" class="w-12 h-12 rounded-xl object-cover border-2 border-white/80 shadow-md bg-white/20 flex-shrink-0">
+                    <div class="min-w-0">
+                        <div class="flex flex-wrap items-center gap-2">
+                            <h3 id="modalStudentName" class="text-base sm:text-lg font-bold truncate text-white">Sakthi Madhavan</h3>
+                            <span id="modalLockBadge" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/40">
+                                🔓 Editable
+                            </span>
+                            <span id="modalSecurityNotice" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-white/20 text-white border border-white/30 hidden">
+                                🛡️ Principal Full Access
+                            </span>
+                        </div>
+                        <p class="text-xs text-blue-100 flex flex-wrap items-center gap-2 mt-0.5">
+                            <span id="modalStudentRollNo" class="font-mono font-semibold">721124243067</span>
+                            <span>•</span>
+                            <span id="modalStudentDeptYear">CSE • III Year (Sem 6)</span>
+                            <span>•</span>
+                            <span id="modalStudentEmail" class="font-mono">student@study-world.edu.in</span>
+                        </p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2 flex-shrink-0 self-end sm:self-auto">
+                    <button type="button" id="btnModalHodLock" onclick="toggleModalHodLock()" class="px-3 py-1.5 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
+                        <span>🔒</span> <span id="btnModalHodLockText">Verify & Lock</span>
+                    </button>
+                    <button type="button" onclick="downloadModalStudentZip()" class="px-3 py-1.5 bg-white/10 hover:bg-white/20 text-white rounded-xl text-xs font-semibold transition flex items-center gap-1.5">
+                        <span>📦</span> <span>All Docs ZIP</span>
+                    </button>
+                    <button type="button" onclick="printModalStudentData()" class="px-2.5 py-1.5 bg-white/10 hover:bg-white/20 text-white rounded-xl text-xs font-semibold transition" title="Print Record">
+                        <span>🖨️</span>
+                    </button>
+                    <button type="button" onclick="closeFullProfileModal()" class="w-8 h-8 rounded-xl bg-white/10 hover:bg-white/20 text-white flex items-center justify-center font-bold text-sm transition">
+                        ✕
+                    </button>
+                </div>
+            </div>
+
+            <!-- Modal 8 Category Tabs -->
+            <div class="bg-slate-100 p-1.5 border-b border-slate-200 flex items-center gap-1 overflow-x-auto no-scrollbar flex-shrink-0" id="modalMasterTabsNav">
+                <button type="button" onclick="switchModalTab('personal')" id="modalTabBtn_personal" class="modal-tab-btn px-3 py-1.5 rounded-lg text-xs font-bold transition bg-[#0A2D6A] text-white flex-shrink-0">
+                    1. Personal
+                </button>
+                <button type="button" onclick="switchModalTab('academic')" id="modalTabBtn_academic" class="modal-tab-btn px-3 py-1.5 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-200 transition flex-shrink-0">
+                    2. Academic
+                </button>
+                <button type="button" onclick="switchModalTab('family')" id="modalTabBtn_family" class="modal-tab-btn px-3 py-1.5 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-200 transition flex-shrink-0">
+                    3. Family
+                </button>
+                <button type="button" onclick="switchModalTab('fees')" id="modalTabBtn_fees" class="modal-tab-btn px-3 py-1.5 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-200 transition flex-shrink-0">
+                    4. Fees
+                </button>
+                <button type="button" onclick="switchModalTab('documents')" id="modalTabBtn_documents" class="modal-tab-btn px-3 py-1.5 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-200 transition flex-shrink-0 flex items-center gap-1">
+                    <span>5. Documents</span>
+                    <span id="modalDocsCountBadge" class="bg-amber-500 text-white text-[10px] font-bold px-1.5 rounded-full">0</span>
+                </button>
+                <button type="button" onclick="switchModalTab('hostel')" id="modalTabBtn_hostel" class="modal-tab-btn px-3 py-1.5 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-200 transition flex-shrink-0">
+                    6. Hostel & Transport
+                </button>
+                <button type="button" onclick="switchModalTab('bank')" id="modalTabBtn_bank" class="modal-tab-btn px-3 py-1.5 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-200 transition flex-shrink-0">
+                    7. Bank Details
+                </button>
+                <button type="button" onclick="switchModalTab('official')" id="modalTabBtn_official" class="modal-tab-btn px-3 py-1.5 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-200 transition flex-shrink-0">
+                    8. Official & Remarks
+                </button>
+            </div>
+
+            <!-- Modal Content Body (Scrollable) -->
+            <div class="p-4 sm:p-6 overflow-y-auto flex-1 space-y-4 text-xs" id="modalTabContentContainer">
+                <!-- Content injected dynamically based on current student -->
+            </div>
+
+            <!-- Sticky Modal Footer -->
+            <div class="p-3 sm:p-4 bg-slate-50 border-t border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 flex-shrink-0">
+                <div class="flex items-center gap-2">
+                    <span class="text-[11px] font-bold text-slate-500">HOD Action:</span>
+                    <input type="text" id="modalHODCommentInput" placeholder="Add official HOD notes / remarks for student file..." class="px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs w-64 sm:w-80">
+                    <button type="button" onclick="saveModalHODComment()" class="px-3 py-1.5 bg-[#0A2D6A] text-white rounded-lg text-xs font-semibold hover:bg-[#082252]">
+                        Save Remarks
+                    </button>
+                </div>
+                <div class="flex items-center gap-2 self-end sm:self-auto">
+                    <button type="button" onclick="closeFullProfileModal()" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-xl text-xs font-semibold">
+                        Close Window
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Document Preview Modal (Viewer iframe / image) -->
+    <div id="docPreviewModal" class="fixed inset-0 bg-black/70 backdrop modal-backdrop hidden z-50 flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
+        <div class="bg-white rounded-2xl w-full max-w-4xl modal-scale border border-slate-200 shadow-2xl overflow-hidden my-auto max-h-[90vh] flex flex-col">
+            <div class="p-3.5 bg-[#0A2D6A] text-white flex items-center justify-between">
+                <div class="flex items-center gap-2 min-w-0">
+                    <span class="text-lg">📄</span>
+                    <div class="min-w-0">
+                        <h4 id="previewDocTitle" class="text-sm font-bold truncate">Document Preview</h4>
+                        <p id="previewDocSubtitle" class="text-[10px] text-blue-100 truncate">SWCE Verified Digital Archive</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <a id="previewDocDownloadBtn" href="#" download class="px-3 py-1 bg-white text-[#0A2D6A] rounded-lg text-xs font-bold hover:bg-slate-100 flex items-center gap-1">
+                        <span>⬇️</span> <span>Download</span>
+                    </a>
+                    <button type="button" onclick="closeDocPreviewModal()" class="w-7 h-7 rounded-lg bg-white/20 text-white flex items-center justify-center font-bold text-xs hover:bg-white/30">
+                        ✕
+                    </button>
+                </div>
+            </div>
+            <div class="p-4 overflow-y-auto flex-1 flex items-center justify-center bg-slate-100 min-h-[350px]" id="previewDocBody">
+                <!-- Document image or iframe injected here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Data Access Logs Modal -->
+    <div id="dataAccessLogsModal" class="fixed inset-0 bg-black/60 backdrop modal-backdrop hidden z-50 flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+        <div class="bg-white rounded-2xl p-5 sm:p-6 w-full max-w-3xl modal-scale border border-slate-200 shadow-2xl space-y-4 my-auto max-h-[85vh] flex flex-col">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                <div class="flex items-center gap-2">
+                    <span class="text-2xl">🛡️</span>
+                    <div>
+                        <h3 class="text-base font-bold text-[#0A2D6A]">Security & Data Access Audit Trail</h3>
+                        <p class="text-xs text-slate-500">Compliance log of all faculty, HOD and principal access to student records</p>
+                    </div>
+                </div>
+                <button type="button" onclick="closeDataAccessLogsModal()" class="w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center font-bold text-sm">
+                    ✕
+                </button>
+            </div>
+            <div class="overflow-x-auto flex-1 max-h-[400px]">
+                <table class="w-full text-left text-xs">
+                    <thead class="bg-slate-50 text-[11px] font-bold text-slate-600 uppercase border-b border-slate-200">
+                        <tr>
+                            <th class="p-2.5">Timestamp</th>
+                            <th class="p-2.5">Viewer Email</th>
+                            <th class="p-2.5">Viewer Role</th>
+                            <th class="p-2.5">Target Student</th>
+                            <th class="p-2.5">Action Executed</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dataAccessLogsTableBody" class="divide-y divide-slate-100 font-mono text-[11px]">
+                        <!-- Populated dynamically -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="flex items-center justify-between pt-3 border-t border-slate-100">
+                <button type="button" onclick="clearDataAccessLogs()" class="text-xs text-slate-400 hover:text-rose-600 font-semibold">
+                    Clear Audit Logs (Admin Only)
+                </button>
+                <button type="button" onclick="closeDataAccessLogsModal()" class="px-4 py-2 bg-[#0A2D6A] text-white rounded-xl text-xs font-semibold">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>

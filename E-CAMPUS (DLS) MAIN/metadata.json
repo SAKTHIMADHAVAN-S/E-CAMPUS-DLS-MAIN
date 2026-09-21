@@ -1,0 +1,6 @@
+{
+  "name": "Digital Leave Letter System - SWCE",
+  "description": "Digital Leave Letter Management System for Study World College of Engineering",
+  "requestFramePermissions": ["camera"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
